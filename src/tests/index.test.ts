@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { app } from "../index";
 import request from "supertest";
+import { prismaClient } from "../__mocks__/db";
 
 // simple mocking
 // vi.mock("../db", () => {
@@ -13,19 +14,36 @@ import request from "supertest";
 //   };
 // });
 
-
 // Deep mocking - all the request functions is presend in the mocks folder
 
-vi.mock('../db')
+vi.mock("../db");
 
 describe("tests the sum function", () => {
   it("should return the sum of two numbers", async () => {
+    prismaClient.request.create.mockResolvedValue({
+      id: 1,
+      answer: 3,
+      type: "sum",
+      a: 1,
+      b: 2,
+    });
+
+    vi.spyOn(prismaClient.request, "create");
     const res = await request(app).post("/sum").send({
       a: 1,
       b: 2,
     });
 
+    expect(prismaClient.request.create).toHaveBeenCalledWith({
+      data: {
+        a: 1,
+        b: 2,
+        type: "sum",
+        answer: 3,
+      },
+    });
     expect(res.statusCode).toBe(200);
+    expect(res.body.id).toBe(1);
     expect(res.body.answer).toBe(3);
   });
 
