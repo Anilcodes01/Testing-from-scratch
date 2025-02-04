@@ -1,30 +1,30 @@
-import {describe, expect, it} from '@jest/globals'
-import { sum , multiply} from '../index'
+import { describe, expect, it } from "@jest/globals";
+import { app } from "../index";
+import request from "supertest";
+
+describe("tests the sum function", () => {
+  it("should return the sum of two numbers", async () => {
+    const res = await request(app).post("/sum").send({
+      a: 1,
+      b: 2,
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.answer).toBe(3);
+  });
 
 
-describe('sum', () => {
-    it('should return the sum of two positive integers', () => {
-        const ans = sum(2,5)
-        expect(ans).toBe(7)
+});
+
+
+describe('tests the multiply function', () => {
+    it('should return the multiplicaiton of two numbers', async () => {
+       const res = await request(app).post('/multiply').send({
+        a: 0,
+        b: 4
+       })
+
+       expect(res.statusCode).toBe(200);
+       expect(res.body.answer).toBe(0)
     })
-
-    it('should return the sum of two negative integers', () => {
-        const ans = sum(-4, -7);
-        expect(ans).toBe(-11)
-    })
-
-    it('should return the sum of two 0s', () => {
-        const ans = sum(0, 0);
-        expect(ans).toBe(0)
-    })
-})
-
-
-describe('multiply', () => {
-    it('should return the multiplication of two positive integers', () => {
-        const ans = multiply(2,5)
-        expect(ans).toBe(10)
-    })
-
- 
 })
